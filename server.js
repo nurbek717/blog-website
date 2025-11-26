@@ -5,6 +5,7 @@ const MongoStore = require('connect-mongo');
 const path = require('path');
 const connectDB = require('./config/database');
 const { setLocals } = require('./middleware/auth');
+const { trackVisitor } = require('./middleware/visitor');
 
 // Routes
 const adminRoutes = require('./routes/admin');
@@ -44,6 +45,9 @@ app.use(session({
 
 // Set locals for views
 app.use(setLocals);
+
+// Visitor tracking (faqat public sahifalar uchun)
+app.use(trackVisitor);
 
 // Routes
 app.use('/admin', adminRoutes);

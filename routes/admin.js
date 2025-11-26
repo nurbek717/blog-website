@@ -4,6 +4,7 @@ const Admin = require('../models/Admin');
 const Blog = require('../models/Blog');
 const Category = require('../models/Category');
 const Comment = require('../models/Comment');
+const Visitor = require('../models/Visitor');
 const { isAdmin, isGuest } = require('../middleware/auth');
 const upload = require('../middleware/upload');
 
@@ -65,7 +66,15 @@ router.get('/logout', (req, res) => {
 
 router.get('/dashboard', isAdmin, async (req, res) => {
     try {
-        const [blogCount, categoryCount, commentCount, pendingComments, recentBlogs] = await Promise.all([
+        // Asosiy statistikalar
+        const [
+            blogCount, 
+            categoryCount, 
+            commentCount, 
+            pendingComments, 
+            recentBlogs,
+            totalViews
+        ] = await Promise.all([
             Blog.countDocuments(),
             Category.countDocuments(),
             Comment.countDocuments({ status: 'approved' }),
@@ -74,23 +83,157 @@ router.get('/dashboard', isAdmin, async (req, res) => {
                 .populate('category', 'name')
                 .populate('author', 'name')
                 .sort('-createdAt')
-                .limit(5)
+                .limit(5),
+            Blog.aggregate([{ $group: { _id: null, total: { $sum: '$views' } } }])
         ]);
+        
+        // Visitor statistikalari
+        const [
+            todayVisitors,
+            weeklyVisitors,
+            monthlyVisitors,
+            uniqueToday,
+            uniqueWeekly,
+            uniqueMonthly,
+            realtimeVisitors,
+            dailyStats,
+            hourlyStats,
+            weekdayStats,
+            deviceStats,
+            browserStats,
+            topPages
+        ] = await Promise.all([
+            Visitor.getTodayCount(),
+            Visitor.getWeeklyCount(),
+            Visitor.getMonthlyCount(),
+            Visitor.getUniqueVisitorsToday(),
+            Visitor.getUniqueVisitorsWeekly(),
+            Visitor.getUniqueVisitorsMonthly(),
+            Visitor.getRealtimeVisitors(),
+            Visitor.getDailyStats(30),
+            Visitor.getHourlyStats(7),
+            Visitor.getWeekdayStats(30),
+            Visitor.getDeviceStats(30),
+            Visitor.getBrowserStats(30),
+            Visitor.getTopPages(10, 30)
+        ]);
+        
+        // Kunlik statistikani formatlash (Chart.js uchun)
+        const formattedDailyStats = formatDailyStats(dailyStats, 30);
+        
+        // Soatlik statistikani to'ldirish (0-23)
+        const formattedHourlyStats = formatHourlyStats(hourlyStats);
+        
+        // Hafta kunlari statistikasini formatlash
+        const formattedWeekdayStats = formatWeekdayStats(weekdayStats);
         
         res.render('admin/dashboard', {
             title: 'Dashboard',
-            stats: { blogCount, categoryCount, commentCount, pendingComments },
-            recentBlogs
+            stats: { 
+                blogCount, 
+                categoryCount, 
+                commentCount, 
+                pendingComments,
+                totalViews: totalViews[0]?.total || 0
+            },
+            recentBlogs,
+            visitorStats: {
+                today: todayVisitors,
+                weekly: weeklyVisitors,
+                monthly: monthlyVisitors,
+                uniqueToday,
+                uniqueWeekly,
+                uniqueMonthly,
+                realtime: realtimeVisitors
+            },
+            chartData: {
+                daily: formattedDailyStats,
+                hourly: formattedHourlyStats,
+                weekday: formattedWeekdayStats,
+                devices: deviceStats,
+                browsers: browserStats,
+                topPages
+            }
         });
     } catch (error) {
         console.error(error);
         res.render('admin/dashboard', { 
             title: 'Dashboard',
-            stats: { blogCount: 0, categoryCount: 0, commentCount: 0, pendingComments: 0 },
-            recentBlogs: []
+            stats: { blogCount: 0, categoryCount: 0, commentCount: 0, pendingComments: 0, totalViews: 0 },
+            recentBlogs: [],
+            visitorStats: {
+                today: 0, weekly: 0, monthly: 0,
+                uniqueToday: 0, uniqueWeekly: 0, uniqueMonthly: 0,
+                realtime: 0
+            },
+            chartData: {
+                daily: { labels: [], views: [], unique: [] },
+                hourly: { labels: [], data: [] },
+                weekday: { labels: [], data: [] },
+                devices: [],
+                browsers: [],
+                topPages: []
+            }
         });
     }
 });
+
+// Kunlik statistikani formatlash funksiyasi
+function formatDailyStats(dailyStats, days) {
+    const labels = [];
+    const views = [];
+    const unique = [];
+    
+    const today = new Date();
+    
+    for (let i = days - 1; i >= 0; i--) {
+        const date = new Date(today);
+        date.setDate(date.getDate() - i);
+        
+        const year = date.getFullYear();
+        const month = date.getMonth() + 1;
+        const day = date.getDate();
+        
+        const found = dailyStats.find(d => 
+            d._id.year === year && d._id.month === month && d._id.day === day
+        );
+        
+        labels.push(`${day}/${month}`);
+        views.push(found ? found.count : 0);
+        unique.push(found ? found.uniqueVisitors : 0);
+    }
+    
+    return { labels, views, unique };
+}
+
+// Soatlik statistikani formatlash
+function formatHourlyStats(hourlyStats) {
+    const labels = [];
+    const data = [];
+    
+    for (let i = 0; i < 24; i++) {
+        labels.push(`${i}:00`);
+        const found = hourlyStats.find(h => h._id === i);
+        data.push(found ? found.count : 0);
+    }
+    
+    return { labels, data };
+}
+
+// Hafta kunlari statistikasini formatlash
+function formatWeekdayStats(weekdayStats) {
+    const dayNames = ['Yakshanba', 'Dushanba', 'Seshanba', 'Chorshanba', 'Payshanba', 'Juma', 'Shanba'];
+    const labels = [];
+    const data = [];
+    
+    for (let i = 0; i < 7; i++) {
+        labels.push(dayNames[i]);
+        const found = weekdayStats.find(w => w._id === i);
+        data.push(found ? found.count : 0);
+    }
+    
+    return { labels, data };
+}
 
 // ==================== BLOGS ====================
 
@@ -373,6 +516,18 @@ router.post('/categories/:id/delete', isAdmin, async (req, res) => {
         console.error(error);
         req.session.error = 'Kategoriya o\'chirishda xatolik';
         res.redirect('/admin/categories');
+    }
+});
+
+// ==================== API ====================
+
+// Realtime visitors API
+router.get('/api/realtime-visitors', isAdmin, async (req, res) => {
+    try {
+        const count = await Visitor.getRealtimeVisitors();
+        res.json({ count });
+    } catch (error) {
+        res.json({ count: 0 });
     }
 });
 

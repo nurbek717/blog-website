@@ -2,6 +2,279 @@
 <html lang="uz">
 <head>
     <%- include('partials/head') %>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Analytics Cards */
+        .analytics-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+        
+        .realtime-badge {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #10b981, #059669);
+            padding: 12px 20px;
+            border-radius: 50px;
+            font-weight: 600;
+            box-shadow: 0 4px 20px rgba(16, 185, 129, 0.4);
+            animation: pulse 2s infinite;
+        }
+        
+        .realtime-badge .dot {
+            width: 10px;
+            height: 10px;
+            background: #fff;
+            border-radius: 50%;
+            animation: blink 1s infinite;
+        }
+        
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+        
+        /* Visitor Stats Grid */
+        .visitor-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 32px;
+        }
+        
+        .visitor-stat-card {
+            background: rgba(30, 27, 75, 0.6);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            border-radius: 16px;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .visitor-stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 40px rgba(99, 102, 241, 0.2);
+        }
+        
+        .visitor-stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+        }
+        
+        .visitor-stat-card.today::before { background: linear-gradient(90deg, #6366f1, #818cf8); }
+        .visitor-stat-card.weekly::before { background: linear-gradient(90deg, #0ea5e9, #38bdf8); }
+        .visitor-stat-card.monthly::before { background: linear-gradient(90deg, #10b981, #34d399); }
+        .visitor-stat-card.views::before { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+        
+        .visitor-stat-label {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--gray);
+            margin-bottom: 8px;
+        }
+        
+        .visitor-stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #fff, #94a3b8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .visitor-stat-sub {
+            font-size: 13px;
+            color: var(--gray);
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .visitor-stat-sub i {
+            font-size: 10px;
+        }
+        
+        /* Charts Container */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+        
+        .chart-card {
+            background: rgba(30, 27, 75, 0.6);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .chart-title {
+            font-size: 16px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .chart-title i {
+            color: var(--primary);
+        }
+        
+        .chart-tabs {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .chart-tab {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            cursor: pointer;
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--gray);
+            border: none;
+            transition: all 0.3s ease;
+        }
+        
+        .chart-tab.active, .chart-tab:hover {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 300px;
+        }
+        
+        /* Small Charts Grid */
+        .small-charts-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+        
+        .small-chart-card {
+            background: rgba(30, 27, 75, 0.6);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            border-radius: 16px;
+            padding: 20px;
+        }
+        
+        .small-chart-title {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .small-chart-container {
+            height: 200px;
+            position: relative;
+        }
+        
+        /* Top Pages List */
+        .top-pages-list {
+            margin-top: 16px;
+        }
+        
+        .top-page-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(99, 102, 241, 0.1);
+        }
+        
+        .top-page-item:last-child {
+            border-bottom: none;
+        }
+        
+        .top-page-name {
+            font-size: 13px;
+            color: #e2e8f0;
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        .top-page-count {
+            font-weight: 600;
+            color: var(--primary);
+            font-size: 14px;
+        }
+        
+        .progress-bar-container {
+            flex: 1;
+            margin: 0 16px;
+            height: 6px;
+            background: rgba(99, 102, 241, 0.1);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 3px;
+            transition: width 0.5s ease;
+        }
+        
+        /* Two Column Layout */
+        .two-column-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+        
+        @media (max-width: 1200px) {
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+            .small-charts-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            .two-column-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .small-charts-grid {
+                grid-template-columns: 1fr;
+            }
+            .visitor-stats-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="admin-container">
@@ -25,7 +298,55 @@
                     </div>
                 <% } %>
 
-                <!-- Stats Grid -->
+                <!-- Analytics Header -->
+                <div class="analytics-header">
+                    <h2 style="font-size: 20px; font-weight: 600;">
+                        <i class="fas fa-chart-line" style="color: var(--primary); margin-right: 10px;"></i>
+                        Sayt Statistikasi
+                    </h2>
+                    <div class="realtime-badge">
+                        <span class="dot"></span>
+                        <span><%= visitorStats.realtime %> ta faol tashrif</span>
+                    </div>
+                </div>
+
+                <!-- Visitor Stats Cards -->
+                <div class="visitor-stats-grid">
+                    <div class="visitor-stat-card today">
+                        <div class="visitor-stat-label">Bugungi tashriflar</div>
+                        <div class="visitor-stat-value"><%= visitorStats.today.toLocaleString() %></div>
+                        <div class="visitor-stat-sub">
+                            <i class="fas fa-user"></i>
+                            <%= visitorStats.uniqueToday %> noyob tashrif
+                        </div>
+                    </div>
+                    <div class="visitor-stat-card weekly">
+                        <div class="visitor-stat-label">Haftalik tashriflar</div>
+                        <div class="visitor-stat-value"><%= visitorStats.weekly.toLocaleString() %></div>
+                        <div class="visitor-stat-sub">
+                            <i class="fas fa-user"></i>
+                            <%= visitorStats.uniqueWeekly %> noyob tashrif
+                        </div>
+                    </div>
+                    <div class="visitor-stat-card monthly">
+                        <div class="visitor-stat-label">Oylik tashriflar</div>
+                        <div class="visitor-stat-value"><%= visitorStats.monthly.toLocaleString() %></div>
+                        <div class="visitor-stat-sub">
+                            <i class="fas fa-user"></i>
+                            <%= visitorStats.uniqueMonthly %> noyob tashrif
+                        </div>
+                    </div>
+                    <div class="visitor-stat-card views">
+                        <div class="visitor-stat-label">Jami ko'rishlar</div>
+                        <div class="visitor-stat-value"><%= stats.totalViews.toLocaleString() %></div>
+                        <div class="visitor-stat-sub">
+                            <i class="fas fa-eye"></i>
+                            Barcha blog postlar
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Main Stats Grid -->
                 <div class="stats-grid">
                     <div class="stat-card">
                         <div class="stat-icon blogs">
@@ -68,21 +389,121 @@
                     </div>
                 </div>
 
-                <!-- Quick Actions -->
-                <div class="card" style="margin-bottom: 24px;">
-                    <div class="card-header">
-                        <h3 class="card-title">Tezkor Harakatlar</h3>
+                <!-- Main Chart -->
+                <div class="charts-grid">
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <div class="chart-title">
+                                <i class="fas fa-chart-area"></i>
+                                So'nggi 30 kunlik tashriflar
+                            </div>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="dailyChart"></canvas>
+                        </div>
                     </div>
-                    <div style="display: flex; gap: 12px; flex-wrap: wrap;">
-                        <a href="/admin/blogs/create" class="btn btn-primary">
-                            <i class="fas fa-plus"></i> Yangi Blog
-                        </a>
-                        <a href="/admin/categories/create" class="btn btn-secondary">
-                            <i class="fas fa-folder-plus"></i> Yangi Kategoriya
-                        </a>
-                        <a href="/admin/comments?status=pending" class="btn btn-warning">
-                            <i class="fas fa-eye"></i> Izohlarni Ko'rish
-                        </a>
+                    
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <div class="chart-title">
+                                <i class="fas fa-star"></i>
+                                Top sahifalar
+                            </div>
+                        </div>
+                        <div class="top-pages-list">
+                            <% const maxPageViews = chartData.topPages.length > 0 ? chartData.topPages[0].count : 1; %>
+                            <% chartData.topPages.slice(0, 6).forEach(function(page) { %>
+                                <div class="top-page-item">
+                                    <span class="top-page-name" title="<%= page._id %>">
+                                        <%= page._id === '/' ? 'Bosh sahifa' : page._id %>
+                                    </span>
+                                    <div class="progress-bar-container">
+                                        <div class="progress-bar" style="width: <%= (page.count / maxPageViews * 100) %>%"></div>
+                                    </div>
+                                    <span class="top-page-count"><%= page.count %></span>
+                                </div>
+                            <% }); %>
+                            <% if (chartData.topPages.length === 0) { %>
+                                <p style="color: var(--gray); text-align: center; padding: 20px;">Ma'lumot mavjud emas</p>
+                            <% } %>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Small Charts -->
+                <div class="small-charts-grid">
+                    <div class="small-chart-card">
+                        <div class="small-chart-title">
+                            <i class="fas fa-clock" style="color: var(--secondary);"></i>
+                            Soatlik taqsimot
+                        </div>
+                        <div class="small-chart-container">
+                            <canvas id="hourlyChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="small-chart-card">
+                        <div class="small-chart-title">
+                            <i class="fas fa-calendar-week" style="color: var(--success);"></i>
+                            Hafta kunlari
+                        </div>
+                        <div class="small-chart-container">
+                            <canvas id="weekdayChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="small-chart-card">
+                        <div class="small-chart-title">
+                            <i class="fas fa-mobile-alt" style="color: var(--accent);"></i>
+                            Qurilmalar
+                        </div>
+                        <div class="small-chart-container">
+                            <canvas id="deviceChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Two Column: Browser Stats & Quick Actions -->
+                <div class="two-column-grid">
+                    <!-- Browser Stats -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                <i class="fab fa-chrome" style="color: var(--primary); margin-right: 8px;"></i>
+                                Brauzerlar
+                            </h3>
+                        </div>
+                        <div style="display: flex; flex-wrap: wrap; gap: 12px;">
+                            <% const browserColors = { 'Chrome': '#4285F4', 'Firefox': '#FF7139', 'Safari': '#000', 'Edge': '#0078D7', 'Opera': '#FF1B2D', 'Other': '#64748b' }; %>
+                            <% chartData.browsers.forEach(function(browser) { %>
+                                <div style="background: rgba(99, 102, 241, 0.1); padding: 12px 16px; border-radius: 12px; display: flex; align-items: center; gap: 10px;">
+                                    <div style="width: 12px; height: 12px; border-radius: 50%; background: <%= browserColors[browser._id] || '#64748b' %>;"></div>
+                                    <span><%= browser._id || 'Noma\'lum' %></span>
+                                    <span style="color: var(--primary); font-weight: 600;"><%= browser.count %></span>
+                                </div>
+                            <% }); %>
+                            <% if (chartData.browsers.length === 0) { %>
+                                <p style="color: var(--gray);">Ma'lumot mavjud emas</p>
+                            <% } %>
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Tezkor Harakatlar</h3>
+                        </div>
+                        <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                            <a href="/admin/blogs/create" class="btn btn-primary">
+                                <i class="fas fa-plus"></i> Yangi Blog
+                            </a>
+                            <a href="/admin/categories/create" class="btn btn-secondary">
+                                <i class="fas fa-folder-plus"></i> Yangi Kategoriya
+                            </a>
+                            <a href="/admin/comments?status=pending" class="btn btn-warning">
+                                <i class="fas fa-eye"></i> Izohlarni Ko'rish
+                            </a>
+                        </div>
                     </div>
                 </div>
 
@@ -98,6 +519,7 @@
                                 <tr>
                                     <th>Sarlavha</th>
                                     <th>Kategoriya</th>
+                                    <th>Ko'rishlar</th>
                                     <th>Holat</th>
                                     <th>Sana</th>
                                     <th>Amallar</th>
@@ -110,6 +532,12 @@
                                             <strong><%= blog.title.substring(0, 40) %><%= blog.title.length > 40 ? '...' : '' %></strong>
                                         </td>
                                         <td><%= blog.category ? blog.category.name : 'Yo\'q' %></td>
+                                        <td>
+                                            <span style="color: var(--primary); font-weight: 600;">
+                                                <i class="fas fa-eye" style="font-size: 12px; margin-right: 4px;"></i>
+                                                <%= blog.views || 0 %>
+                                            </span>
+                                        </td>
                                         <td>
                                             <span class="badge <%= blog.status === 'published' ? 'badge-success' : blog.status === 'draft' ? 'badge-warning' : 'badge-danger' %>">
                                                 <%= blog.status === 'published' ? 'Nashr' : blog.status === 'draft' ? 'Qoralama' : 'Arxiv' %>
@@ -129,7 +557,7 @@
                                     </tr>
                                 <% }); %>
                                 <% if (recentBlogs.length === 0) { %>
-                                    <tr><td colspan="5" style="text-align: center; color: #64748b;">Bloglar topilmadi</td></tr>
+                                    <tr><td colspan="6" style="text-align: center; color: #64748b;">Bloglar topilmadi</td></tr>
                                 <% } %>
                             </tbody>
                         </table>
@@ -140,6 +568,213 @@
     </div>
 
     <script>
+        // Chart.js global settings
+        Chart.defaults.color = '#94a3b8';
+        Chart.defaults.borderColor = 'rgba(99, 102, 241, 0.1)';
+        Chart.defaults.font.family = 'Outfit';
+        
+        // Daily Chart (Line/Area)
+        const dailyCtx = document.getElementById('dailyChart').getContext('2d');
+        const dailyGradient = dailyCtx.createLinearGradient(0, 0, 0, 300);
+        dailyGradient.addColorStop(0, 'rgba(99, 102, 241, 0.3)');
+        dailyGradient.addColorStop(1, 'rgba(99, 102, 241, 0)');
+        
+        const dailyGradient2 = dailyCtx.createLinearGradient(0, 0, 0, 300);
+        dailyGradient2.addColorStop(0, 'rgba(14, 165, 233, 0.3)');
+        dailyGradient2.addColorStop(1, 'rgba(14, 165, 233, 0)');
+        
+        new Chart(dailyCtx, {
+            type: 'line',
+            data: {
+                labels: <%- JSON.stringify(chartData.daily.labels) %>,
+                datasets: [{
+                    label: 'Jami tashriflar',
+                    data: <%- JSON.stringify(chartData.daily.views) %>,
+                    borderColor: '#6366f1',
+                    backgroundColor: dailyGradient,
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 0,
+                    pointHoverRadius: 6,
+                    pointHoverBackgroundColor: '#6366f1',
+                    pointHoverBorderColor: '#fff',
+                    pointHoverBorderWidth: 2
+                }, {
+                    label: 'Noyob tashriflar',
+                    data: <%- JSON.stringify(chartData.daily.unique) %>,
+                    borderColor: '#0ea5e9',
+                    backgroundColor: dailyGradient2,
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 0,
+                    pointHoverRadius: 6,
+                    pointHoverBackgroundColor: '#0ea5e9',
+                    pointHoverBorderColor: '#fff',
+                    pointHoverBorderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: {
+                    intersect: false,
+                    mode: 'index'
+                },
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            usePointStyle: true,
+                            padding: 20
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(99, 102, 241, 0.1)'
+                        }
+                    }
+                }
+            }
+        });
+        
+        // Hourly Chart (Bar)
+        const hourlyCtx = document.getElementById('hourlyChart').getContext('2d');
+        new Chart(hourlyCtx, {
+            type: 'bar',
+            data: {
+                labels: <%- JSON.stringify(chartData.hourly.labels) %>,
+                datasets: [{
+                    label: 'Tashriflar',
+                    data: <%- JSON.stringify(chartData.hourly.data) %>,
+                    backgroundColor: 'rgba(14, 165, 233, 0.6)',
+                    borderColor: '#0ea5e9',
+                    borderWidth: 1,
+                    borderRadius: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: {
+                            display: false
+                        },
+                        ticks: {
+                            maxTicksLimit: 12,
+                            font: { size: 10 }
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(99, 102, 241, 0.1)'
+                        },
+                        ticks: {
+                            font: { size: 10 }
+                        }
+                    }
+                }
+            }
+        });
+        
+        // Weekday Chart (Radar/Polar)
+        const weekdayCtx = document.getElementById('weekdayChart').getContext('2d');
+        new Chart(weekdayCtx, {
+            type: 'polarArea',
+            data: {
+                labels: <%- JSON.stringify(chartData.weekday.labels) %>,
+                datasets: [{
+                    data: <%- JSON.stringify(chartData.weekday.data) %>,
+                    backgroundColor: [
+                        'rgba(239, 68, 68, 0.6)',
+                        'rgba(99, 102, 241, 0.6)',
+                        'rgba(14, 165, 233, 0.6)',
+                        'rgba(16, 185, 129, 0.6)',
+                        'rgba(245, 158, 11, 0.6)',
+                        'rgba(236, 72, 153, 0.6)',
+                        'rgba(168, 85, 247, 0.6)'
+                    ],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    r: {
+                        ticks: {
+                            display: false
+                        },
+                        grid: {
+                            color: 'rgba(99, 102, 241, 0.1)'
+                        }
+                    }
+                }
+            }
+        });
+        
+        // Device Chart (Doughnut)
+        const deviceCtx = document.getElementById('deviceChart').getContext('2d');
+        const deviceData = <%- JSON.stringify(chartData.devices) %>;
+        const deviceLabels = deviceData.map(d => {
+            const names = { 'desktop': 'Kompyuter', 'mobile': 'Telefon', 'tablet': 'Planshet', 'unknown': 'Noma\'lum' };
+            return names[d._id] || d._id;
+        });
+        const deviceValues = deviceData.map(d => d.count);
+        
+        new Chart(deviceCtx, {
+            type: 'doughnut',
+            data: {
+                labels: deviceLabels,
+                datasets: [{
+                    data: deviceValues,
+                    backgroundColor: [
+                        'rgba(99, 102, 241, 0.8)',
+                        'rgba(14, 165, 233, 0.8)',
+                        'rgba(16, 185, 129, 0.8)',
+                        'rgba(100, 116, 139, 0.8)'
+                    ],
+                    borderWidth: 0,
+                    hoverOffset: 10
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '65%',
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            usePointStyle: true,
+                            padding: 15,
+                            font: { size: 11 }
+                        }
+                    }
+                }
+            }
+        });
+        
+        // Alert auto-hide
         setTimeout(() => {
             document.querySelectorAll('.alert').forEach(alert => {
                 alert.style.opacity = '0';
@@ -147,6 +782,20 @@
                 setTimeout(() => alert.remove(), 300);
             });
         }, 5000);
+        
+        // Refresh realtime visitors every 30 seconds
+        setInterval(async () => {
+            try {
+                const response = await fetch('/admin/api/realtime-visitors');
+                if (response.ok) {
+                    const data = await response.json();
+                    const badge = document.querySelector('.realtime-badge span:last-child');
+                    if (badge) {
+                        badge.textContent = `${data.count} ta faol tashrif`;
+                    }
+                }
+            } catch (e) {}
+        }, 30000);
     </script>
 </body>
 </html>
