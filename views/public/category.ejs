@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <%- include('partials/head') %>
+</head>
+<body>
+    <%- include('partials/header') %>
+
+    <!-- Category Header -->
+    <section style="padding: 60px 0; text-align: center; background: linear-gradient(135deg, rgba(201, 162, 39, 0.1), rgba(233, 69, 96, 0.05));">
+        <div class="container">
+            <h1 style="font-family: 'Crimson Pro', serif; font-size: 42px; margin-bottom: 16px;">
+                <%= category.name %>
+            </h1>
+            <% if (category.description) { %>
+                <p style="color: var(--text-secondary); max-width: 600px; margin: 0 auto;"><%= category.description %></p>
+            <% } %>
+        </div>
+    </section>
+
+    <!-- Blog Grid -->
+    <div class="container">
+        <div class="main-layout">
+            <main>
+                <div class="blog-grid" style="grid-template-columns: repeat(2, 1fr);">
+                    <% blogs.forEach(function(blog) { %>
+                        <article class="blog-card">
+                            <a href="/blog/<%= blog.slug %>" class="blog-card-image">
+                                <img src="<%= blog.featuredImage %>" alt="<%= blog.title %>" onerror="this.src='/uploads/default-blog.svg'">
+                            </a>
+                            <div class="blog-card-content">
+                                <div class="blog-card-meta">
+                                    <span><i class="far fa-calendar"></i> <%= new Date(blog.publishedAt || blog.createdAt).toLocaleDateString('uz-UZ') %></span>
+                                    <span><i class="far fa-eye"></i> <%= blog.views %></span>
+                                </div>
+                                <a href="/blog/<%= blog.slug %>">
+                                    <h3 class="blog-card-title"><%= blog.title %></h3>
+                                </a>
+                                <p class="blog-card-excerpt"><%= blog.excerpt || '' %></p>
+                                <div class="blog-card-footer">
+                                    <div class="author">
+                                        <div class="author-avatar"><%= blog.author ? blog.author.name.charAt(0).toUpperCase() : 'A' %></div>
+                                        <span class="author-name"><%= blog.author ? blog.author.name : 'Admin' %></span>
+                                    </div>
+                                    <a href="/blog/<%= blog.slug %>" class="read-more">
+                                        O'qish <i class="fas fa-arrow-right"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </article>
+                    <% }); %>
+                </div>
+
+                <% if (blogs.length === 0) { %>
+                    <p style="text-align: center; color: var(--text-secondary); padding: 60px 0;">Bu kategoriyada hozircha maqolalar yo'q</p>
+                <% } %>
+
+                <% if (totalPages > 1) { %>
+                    <div class="pagination">
+                        <% if (currentPage > 1) { %>
+                            <a href="/category/<%= category.slug %>?page=<%= currentPage - 1 %>">&laquo; Oldingi</a>
+                        <% } %>
+                        <% for (var i = 1; i <= totalPages; i++) { %>
+                            <% if (i === currentPage) { %>
+                                <span class="active"><%= i %></span>
+                            <% } else { %>
+                                <a href="/category/<%= category.slug %>?page=<%= i %>"><%= i %></a>
+                            <% } %>
+                        <% } %>
+                        <% if (currentPage < totalPages) { %>
+                            <a href="/category/<%= category.slug %>?page=<%= currentPage + 1 %>">Keyingi &raquo;</a>
+                        <% } %>
+                    </div>
+                <% } %>
+            </main>
+
+            <!-- Sidebar -->
+            <aside class="sidebar">
+                <div class="sidebar-widget">
+                    <h3 class="widget-title"><i class="fas fa-folder"></i> Kategoriyalar</h3>
+                    <ul class="category-list">
+                        <% categories.forEach(function(cat) { %>
+                            <li>
+                                <a href="/category/<%= cat.slug %>" style="<%= cat._id.toString() === category._id.toString() ? 'background: rgba(201, 162, 39, 0.1); color: var(--primary);' : '' %>">
+                                    <%= cat.name %>
+                                </a>
+                            </li>
+                        <% }); %>
+                    </ul>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <%- include('partials/footer') %>
+</body>
+</html>

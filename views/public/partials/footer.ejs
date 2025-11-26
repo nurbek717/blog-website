@@ -1,0 +1,58 @@
+<!-- Footer -->
+<footer class="footer">
+    <div class="container">
+        <div class="footer-grid">
+            <div>
+                <div class="footer-brand">
+                    <i class="fas fa-feather-alt"></i>
+                    BlogSayt
+                </div>
+                <p class="footer-desc">
+                    Eng so'nggi yangiliklar, texnologiya va hayot haqida qiziqarli maqolalar.
+                    Biz bilan dunyoni kashf eting.
+                </p>
+                <div class="social-links">
+                    <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-telegram-plane"></i></a>
+                </div>
+            </div>
+
+            <div>
+                <h4 class="footer-title">Kategoriyalar</h4>
+                <ul class="footer-links">
+                    <% if (typeof categories !== 'undefined') { %>
+                        <% categories.slice(0, 5).forEach(function(cat) { %>
+                            <li><a href="/category/<%= cat.slug %>"><%= cat.name %></a></li>
+                        <% }); %>
+                    <% } %>
+                </ul>
+            </div>
+
+            <div>
+                <h4 class="footer-title">Foydali havolalar</h4>
+                <ul class="footer-links">
+                    <li><a href="/">Bosh Sahifa</a></li>
+                    <li><a href="/about">Biz Haqimizda</a></li>
+                    <li><a href="/contact">Aloqa</a></li>
+                    <li><a href="/admin/login">Admin</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <h4 class="footer-title">Bog'lanish</h4>
+                <ul class="footer-links">
+                    <li><i class="fas fa-envelope"></i> info@blogsayt.uz</li>
+                    <li><i class="fas fa-phone"></i> +998 90 123 45 67</li>
+                    <li><i class="fas fa-map-marker-alt"></i> Toshkent, O'zbekiston</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            &copy; <%= new Date().getFullYear() %> BlogSayt. Barcha huquqlar himoyalangan.
+        </div>
+    </div>
+</footer>
+

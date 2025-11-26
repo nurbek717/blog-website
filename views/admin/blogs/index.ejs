@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <%- include('../partials/head') %>
+</head>
+<body>
+    <div class="admin-container">
+        <%- include('../partials/sidebar') %>
+
+        <main class="main-content">
+            <%- include('../partials/topbar') %>
+
+            <div class="page-content">
+                <% if (typeof success !== 'undefined' && success) { %>
+                    <div class="alert alert-success">
+                        <i class="fas fa-check-circle"></i>
+                        <%= success %>
+                    </div>
+                <% } %>
+
+                <% if (typeof error !== 'undefined' && error) { %>
+                    <div class="alert alert-error">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <%= error %>
+                    </div>
+                <% } %>
+
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; margin-bottom: 24px;">
+                    <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                        <select onchange="filterBlogs(this)" class="form-control" style="width: auto;">
+                            <option value="">Barcha holatlar</option>
+                            <option value="published" <%= query.status === 'published' ? 'selected' : '' %>>Nashr</option>
+                            <option value="draft" <%= query.status === 'draft' ? 'selected' : '' %>>Qoralama</option>
+                            <option value="archived" <%= query.status === 'archived' ? 'selected' : '' %>>Arxiv</option>
+                        </select>
+                        <select onchange="filterCategory(this)" class="form-control" style="width: auto;">
+                            <option value="">Barcha kategoriyalar</option>
+                            <% categories.forEach(function(cat) { %>
+                                <option value="<%= cat._id %>" <%= query.category === cat._id.toString() ? 'selected' : '' %>><%= cat.name %></option>
+                            <% }); %>
+                        </select>
+                    </div>
+                    <a href="/admin/blogs/create" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Yangi Blog
+                    </a>
+                </div>
+
+                <div class="card">
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Rasm</th>
+                                    <th>Sarlavha</th>
+                                    <th>Kategoriya</th>
+                                    <th>Muallif</th>
+                                    <th>Holat</th>
+                                    <th>Ko'rishlar</th>
+                                    <th>Sana</th>
+                                    <th>Amallar</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% blogs.forEach(function(blog) { %>
+                                    <tr>
+                                        <td>
+                                            <img src="<%= blog.featuredImage %>" alt="" class="image-preview" onerror="this.src='/uploads/default-blog.svg'">
+                                        </td>
+                                        <td>
+                                            <strong><%= blog.title.substring(0, 35) %><%= blog.title.length > 35 ? '...' : '' %></strong>
+                                            <% if (blog.isFeatured) { %>
+                                                <span class="badge badge-warning" style="margin-left: 8px;"><i class="fas fa-star"></i></span>
+                                            <% } %>
+                                        </td>
+                                        <td><%= blog.category ? blog.category.name : '-' %></td>
+                                        <td><%= blog.author ? blog.author.name : '-' %></td>
+                                        <td>
+                                            <span class="badge <%= blog.status === 'published' ? 'badge-success' : blog.status === 'draft' ? 'badge-warning' : 'badge-danger' %>">
+                                                <%= blog.status === 'published' ? 'Nashr' : blog.status === 'draft' ? 'Qoralama' : 'Arxiv' %>
+                                            </span>
+                                        </td>
+                                        <td><i class="fas fa-eye" style="color: #64748b;"></i> <%= blog.views %></td>
+                                        <td><%= new Date(blog.createdAt).toLocaleDateString('uz-UZ') %></td>
+                                        <td>
+                                            <div class="action-buttons">
+                                                <a href="/admin/blogs/<%= blog._id %>/edit" class="action-btn edit" title="Tahrirlash">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                                <a href="/blog/<%= blog.slug %>" target="_blank" class="action-btn view" title="Ko'rish">
+                                                    <i class="fas fa-external-link-alt"></i>
+                                                </a>
+                                                <form action="/admin/blogs/<%= blog._id %>/delete" method="POST" style="display: inline;" onsubmit="return confirm('Blogni o\'chirishni tasdiqlaysizmi?')">
+                                                    <button type="submit" class="action-btn delete" title="O'chirish">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                <% }); %>
+                                <% if (blogs.length === 0) { %>
+                                    <tr><td colspan="8" style="text-align: center; color: #64748b; padding: 40px;">Bloglar topilmadi</td></tr>
+                                <% } %>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <% if (totalPages > 1) { %>
+                        <div class="pagination">
+                            <% if (currentPage > 1) { %>
+                                <a href="/admin/blogs?page=<%= currentPage - 1 %>&status=<%= query.status || '' %>&category=<%= query.category || '' %>">&laquo; Oldingi</a>
+                            <% } %>
+                            <% for (var i = 1; i <= totalPages; i++) { %>
+                                <% if (i === currentPage) { %>
+                                    <span class="active"><%= i %></span>
+                                <% } else { %>
+                                    <a href="/admin/blogs?page=<%= i %>&status=<%= query.status || '' %>&category=<%= query.category || '' %>"><%= i %></a>
+                                <% } %>
+                            <% } %>
+                            <% if (currentPage < totalPages) { %>
+                                <a href="/admin/blogs?page=<%= currentPage + 1 %>&status=<%= query.status || '' %>&category=<%= query.category || '' %>">Keyingi &raquo;</a>
+                            <% } %>
+                        </div>
+                    <% } %>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        function filterBlogs(select) {
+            const url = new URL(window.location.href);
+            url.searchParams.set('status', select.value);
+            url.searchParams.delete('page');
+            window.location.href = url.toString();
+        }
+
+        function filterCategory(select) {
+            const url = new URL(window.location.href);
+            url.searchParams.set('category', select.value);
+            url.searchParams.delete('page');
+            window.location.href = url.toString();
+        }
+    </script>
+</body>
+</html>

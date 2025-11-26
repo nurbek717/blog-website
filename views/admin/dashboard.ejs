@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <%- include('partials/head') %>
+</head>
+<body>
+    <div class="admin-container">
+        <%- include('partials/sidebar') %>
+
+        <main class="main-content">
+            <%- include('partials/topbar') %>
+
+            <div class="page-content">
+                <% if (typeof success !== 'undefined' && success) { %>
+                    <div class="alert alert-success">
+                        <i class="fas fa-check-circle"></i>
+                        <%= success %>
+                    </div>
+                <% } %>
+
+                <% if (typeof error !== 'undefined' && error) { %>
+                    <div class="alert alert-error">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <%= error %>
+                    </div>
+                <% } %>
+
+                <!-- Stats Grid -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon blogs">
+                            <i class="fas fa-newspaper"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3><%= stats.blogCount %></h3>
+                            <p>Jami Bloglar</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon categories">
+                            <i class="fas fa-folder"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3><%= stats.categoryCount %></h3>
+                            <p>Kategoriyalar</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon comments">
+                            <i class="fas fa-comments"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3><%= stats.commentCount %></h3>
+                            <p>Tasdiqlangan Izohlar</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon pending">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3><%= stats.pendingComments %></h3>
+                            <p>Kutilayotgan Izohlar</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="card" style="margin-bottom: 24px;">
+                    <div class="card-header">
+                        <h3 class="card-title">Tezkor Harakatlar</h3>
+                    </div>
+                    <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                        <a href="/admin/blogs/create" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> Yangi Blog
+                        </a>
+                        <a href="/admin/categories/create" class="btn btn-secondary">
+                            <i class="fas fa-folder-plus"></i> Yangi Kategoriya
+                        </a>
+                        <a href="/admin/comments?status=pending" class="btn btn-warning">
+                            <i class="fas fa-eye"></i> Izohlarni Ko'rish
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Recent Blogs -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">So'nggi Bloglar</h3>
+                        <a href="/admin/blogs" class="btn btn-sm btn-secondary">Hammasini ko'rish</a>
+                    </div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Sarlavha</th>
+                                    <th>Kategoriya</th>
+                                    <th>Holat</th>
+                                    <th>Sana</th>
+                                    <th>Amallar</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% recentBlogs.forEach(function(blog) { %>
+                                    <tr>
+                                        <td>
+                                            <strong><%= blog.title.substring(0, 40) %><%= blog.title.length > 40 ? '...' : '' %></strong>
+                                        </td>
+                                        <td><%= blog.category ? blog.category.name : 'Yo\'q' %></td>
+                                        <td>
+                                            <span class="badge <%= blog.status === 'published' ? 'badge-success' : blog.status === 'draft' ? 'badge-warning' : 'badge-danger' %>">
+                                                <%= blog.status === 'published' ? 'Nashr' : blog.status === 'draft' ? 'Qoralama' : 'Arxiv' %>
+                                            </span>
+                                        </td>
+                                        <td><%= new Date(blog.createdAt).toLocaleDateString('uz-UZ') %></td>
+                                        <td>
+                                            <div class="action-buttons">
+                                                <a href="/admin/blogs/<%= blog._id %>/edit" class="action-btn edit" title="Tahrirlash">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                                <a href="/blog/<%= blog.slug %>" target="_blank" class="action-btn view" title="Ko'rish">
+                                                    <i class="fas fa-eye"></i>
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                <% }); %>
+                                <% if (recentBlogs.length === 0) { %>
+                                    <tr><td colspan="5" style="text-align: center; color: #64748b;">Bloglar topilmadi</td></tr>
+                                <% } %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        setTimeout(() => {
+            document.querySelectorAll('.alert').forEach(alert => {
+                alert.style.opacity = '0';
+                alert.style.transform = 'translateY(-10px)';
+                setTimeout(() => alert.remove(), 300);
+            });
+        }, 5000);
+    </script>
+</body>
+</html>

@@ -1,0 +1,43 @@
+<aside class="sidebar">
+    <div class="sidebar-header">
+        <a href="/admin/dashboard" class="sidebar-logo">
+            <i class="fas fa-blog"></i>
+            <span>BlogAdmin</span>
+        </a>
+    </div>
+    
+    <nav class="sidebar-nav">
+        <div class="nav-section">
+            <div class="nav-section-title">Asosiy</div>
+            <a href="/admin/dashboard" class="nav-link <%= typeof title !== 'undefined' && title === 'Dashboard' ? 'active' : '' %>">
+                <i class="fas fa-home"></i>
+                Dashboard
+            </a>
+        </div>
+
+        <div class="nav-section">
+            <div class="nav-section-title">Kontent</div>
+            <a href="/admin/blogs" class="nav-link <%= typeof title !== 'undefined' && title.includes('Blog') ? 'active' : '' %>">
+                <i class="fas fa-newspaper"></i>
+                Bloglar
+            </a>
+            <a href="/admin/categories" class="nav-link <%= typeof title !== 'undefined' && title.includes('Kategori') ? 'active' : '' %>">
+                <i class="fas fa-folder"></i>
+                Kategoriyalar
+            </a>
+            <a href="/admin/comments" class="nav-link <%= typeof title !== 'undefined' && title.includes('Izoh') ? 'active' : '' %>">
+                <i class="fas fa-comments"></i>
+                Izohlar
+            </a>
+        </div>
+
+        <div class="nav-section">
+            <div class="nav-section-title">Tezkor havolalar</div>
+            <a href="/" class="nav-link" target="_blank">
+                <i class="fas fa-external-link-alt"></i>
+                Saytni ko'rish
+            </a>
+        </div>
+    </nav>
+</aside>
+

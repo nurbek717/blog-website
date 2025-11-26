@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <%- include('../partials/head') %>
+</head>
+<body>
+    <div class="admin-container">
+        <%- include('../partials/sidebar') %>
+
+        <main class="main-content">
+            <%- include('../partials/topbar') %>
+
+            <div class="page-content">
+                <% if (typeof success !== 'undefined' && success) { %>
+                    <div class="alert alert-success">
+                        <i class="fas fa-check-circle"></i>
+                        <%= success %>
+                    </div>
+                <% } %>
+
+                <% if (typeof error !== 'undefined' && error) { %>
+                    <div class="alert alert-error">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <%= error %>
+                    </div>
+                <% } %>
+
+                <div style="display: flex; justify-content: flex-end; margin-bottom: 24px;">
+                    <a href="/admin/categories/create" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Yangi Kategoriya
+                    </a>
+                </div>
+
+                <div class="card">
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Rasm</th>
+                                    <th>Nomi</th>
+                                    <th>Slug</th>
+                                    <th>Tavsif</th>
+                                    <th>Bloglar</th>
+                                    <th>Holat</th>
+                                    <th>Tartib</th>
+                                    <th>Amallar</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% categories.forEach(function(cat) { %>
+                                    <tr>
+                                        <td>
+                                            <% if (cat.image) { %>
+                                                <img src="<%= cat.image %>" alt="" class="image-preview" onerror="this.src='/uploads/default-category.svg'">
+                                            <% } else { %>
+                                                <span style="color: #64748b;">-</span>
+                                            <% } %>
+                                        </td>
+                                        <td><strong><%= cat.name %></strong></td>
+                                        <td><code style="background: rgba(99, 102, 241, 0.1); padding: 4px 8px; border-radius: 4px; font-size: 12px;"><%= cat.slug %></code></td>
+                                        <td><%= cat.description ? cat.description.substring(0, 40) + '...' : '-' %></td>
+                                        <td><span class="badge badge-info"><%= cat.blogCount || 0 %></span></td>
+                                        <td>
+                                            <span class="badge <%= cat.isActive ? 'badge-success' : 'badge-danger' %>">
+                                                <%= cat.isActive ? 'Faol' : 'Nofaol' %>
+                                            </span>
+                                        </td>
+                                        <td><%= cat.order %></td>
+                                        <td>
+                                            <div class="action-buttons">
+                                                <a href="/admin/categories/<%= cat._id %>/edit" class="action-btn edit" title="Tahrirlash">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                                <a href="/category/<%= cat.slug %>" target="_blank" class="action-btn view" title="Ko'rish">
+                                                    <i class="fas fa-external-link-alt"></i>
+                                                </a>
+                                                <form action="/admin/categories/<%= cat._id %>/delete" method="POST" style="display: inline;" onsubmit="return confirm('Kategoriyani o\'chirishni tasdiqlaysizmi?')">
+                                                    <button type="submit" class="action-btn delete" title="O'chirish" <%= cat.blogCount > 0 ? 'disabled style="opacity: 0.5; cursor: not-allowed;"' : '' %>>
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                <% }); %>
+                                <% if (categories.length === 0) { %>
+                                    <tr><td colspan="8" style="text-align: center; color: #64748b; padding: 40px;">Kategoriyalar topilmadi</td></tr>
+                                <% } %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

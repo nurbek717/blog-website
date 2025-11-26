@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <%- include('partials/head') %>
+</head>
+<body>
+    <%- include('partials/header') %>
+
+    <div class="container">
+        <div class="main-layout" style="padding-top: 40px;">
+            <!-- Blog Content -->
+            <main>
+                <article>
+                    <!-- Blog Header -->
+                    <header style="margin-bottom: 32px;">
+                        <% if (blog.category) { %>
+                            <a href="/category/<%= blog.category.slug %>" style="display: inline-block; background: var(--primary); color: var(--dark); padding: 6px 16px; border-radius: 20px; font-size: 13px; font-weight: 600; margin-bottom: 16px;">
+                                <%= blog.category.name %>
+                            </a>
+                        <% } %>
+                        
+                        <h1 style="font-family: 'Crimson Pro', serif; font-size: 42px; font-weight: 700; line-height: 1.3; margin-bottom: 20px;">
+                            <%= blog.title %>
+                        </h1>
+                        
+                        <div style="display: flex; align-items: center; gap: 24px; color: var(--text-secondary); flex-wrap: wrap;">
+                            <div class="author" style="display: flex; align-items: center; gap: 12px;">
+                                <div class="author-avatar" style="width: 44px; height: 44px; font-size: 16px;">
+                                    <%= blog.author ? blog.author.name.charAt(0).toUpperCase() : 'A' %>
+                                </div>
+                                <div>
+                                    <div style="font-weight: 600; color: var(--text);"><%= blog.author ? blog.author.name : 'Admin' %></div>
+                                    <div style="font-size: 13px;"><%= new Date(blog.publishedAt || blog.createdAt).toLocaleDateString('uz-UZ', { year: 'numeric', month: 'long', day: 'numeric' }) %></div>
+                                </div>
+                            </div>
+                            <span><i class="far fa-eye"></i> <%= blog.views %> ko'rish</span>
+                            <span><i class="far fa-comments"></i> <%= comments.length %> izoh</span>
+                        </div>
+                    </header>
+
+                    <!-- Featured Image -->
+                    <div style="border-radius: 16px; overflow: hidden; margin-bottom: 40px;">
+                        <img src="<%= blog.featuredImage %>" alt="<%= blog.title %>" style="width: 100%; max-height: 500px; object-fit: cover;" onerror="this.src='/uploads/default-blog.svg'">
+                    </div>
+
+                    <!-- Blog Content -->
+                    <div style="font-size: 18px; line-height: 1.9; color: var(--text);">
+                        <%- blog.content.split('\n').map(function(p) { return p.trim() ? '<p style="margin-bottom: 20px;">' + p + '</p>' : ''; }).join('') %>
+                    </div>
+
+                    <!-- Tags -->
+                    <% if (blog.tags && blog.tags.length > 0) { %>
+                        <div style="margin-top: 40px; padding-top: 24px; border-top: 1px solid var(--border);">
+                            <span style="color: var(--text-secondary); margin-right: 12px;"><i class="fas fa-tags"></i> Teglar:</span>
+                            <% blog.tags.forEach(function(tag) { %>
+                                <a href="/search?q=<%= encodeURIComponent(tag) %>" style="display: inline-block; background: rgba(201, 162, 39, 0.1); color: var(--primary); padding: 6px 14px; border-radius: 20px; font-size: 13px; margin: 4px;">
+                                    #<%= tag %>
+                                </a>
+                            <% }); %>
+                        </div>
+                    <% } %>
+
+                    <!-- Share -->
+                    <div style="margin-top: 40px; padding: 24px; background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;">
+                        <span style="font-weight: 600;">Maqolani ulashing:</span>
+                        <div style="display: flex; gap: 12px;">
+                            <a href="https://www.facebook.com/sharer/sharer.php?u=<%= encodeURIComponent('http://localhost:3000/blog/' + blog.slug) %>" target="_blank" class="social-link"><i class="fab fa-facebook-f"></i></a>
+                            <a href="https://twitter.com/intent/tweet?url=<%= encodeURIComponent('http://localhost:3000/blog/' + blog.slug) %>&text=<%= encodeURIComponent(blog.title) %>" target="_blank" class="social-link"><i class="fab fa-twitter"></i></a>
+                            <a href="https://t.me/share/url?url=<%= encodeURIComponent('http://localhost:3000/blog/' + blog.slug) %>&text=<%= encodeURIComponent(blog.title) %>" target="_blank" class="social-link"><i class="fab fa-telegram-plane"></i></a>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Comments Section -->
+                <section id="comments" style="margin-top: 60px;">
+                    <h3 style="font-family: 'Crimson Pro', serif; font-size: 28px; margin-bottom: 32px;">
+                        <i class="far fa-comments" style="color: var(--primary);"></i> Izohlar (<%= comments.length %>)
+                    </h3>
+
+                    <!-- Comment Form -->
+                    <div style="background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; padding: 24px; margin-bottom: 32px;">
+                        <h4 style="margin-bottom: 20px;">Izoh qoldiring</h4>
+                        <form action="/blog/<%= blog.slug %>/comment" method="POST" id="commentForm">
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+                                <input type="text" name="name" placeholder="Ismingiz *" required style="padding: 14px 18px; background: rgba(15, 15, 26, 0.6); border: 1px solid var(--border); border-radius: 10px; color: var(--text); font-size: 15px;">
+                                <input type="email" name="email" placeholder="Email manzilingiz *" required style="padding: 14px 18px; background: rgba(15, 15, 26, 0.6); border: 1px solid var(--border); border-radius: 10px; color: var(--text); font-size: 15px;">
+                            </div>
+                            <textarea name="content" placeholder="Izohingizni yozing... *" required style="width: 100%; padding: 14px 18px; background: rgba(15, 15, 26, 0.6); border: 1px solid var(--border); border-radius: 10px; color: var(--text); font-size: 15px; min-height: 120px; resize: vertical; margin-bottom: 16px;"></textarea>
+                            <button type="submit" style="padding: 14px 28px; background: var(--primary); border: none; border-radius: 10px; color: var(--dark); font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.3s ease;">
+                                <i class="fas fa-paper-plane"></i> Yuborish
+                            </button>
+                        </form>
+                        <div id="commentMessage" style="margin-top: 16px; display: none; padding: 12px 16px; border-radius: 8px;"></div>
+                    </div>
+
+                    <!-- Comments List -->
+                    <div>
+                        <% comments.forEach(function(comment) { %>
+                            <div style="background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin-bottom: 16px;">
+                                <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 16px;">
+                                    <div style="width: 48px; height: 48px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), var(--accent)); display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 18px; color: white;">
+                                        <%= comment.name.charAt(0).toUpperCase() %>
+                                    </div>
+                                    <div>
+                                        <div style="font-weight: 600; color: var(--text);"><%= comment.name %></div>
+                                        <div style="font-size: 13px; color: var(--text-secondary);">
+                                            <%= new Date(comment.createdAt).toLocaleDateString('uz-UZ', { year: 'numeric', month: 'long', day: 'numeric' }) %>
+                                        </div>
+                                    </div>
+                                </div>
+                                <p style="color: var(--text-secondary); line-height: 1.7;"><%= comment.content %></p>
+                            </div>
+                        <% }); %>
+
+                        <% if (comments.length === 0) { %>
+                            <div style="text-align: center; padding: 40px; color: var(--text-secondary);">
+                                <i class="far fa-comment-dots" style="font-size: 48px; margin-bottom: 16px; opacity: 0.5;"></i>
+                                <p>Hozircha izohlar yo'q. Birinchi bo'lib izoh qoldiring!</p>
+                            </div>
+                        <% } %>
+                    </div>
+                </section>
+
+                <!-- Related Posts -->
+                <% if (relatedBlogs && relatedBlogs.length > 0) { %>
+                    <section style="margin-top: 60px;">
+                        <h3 style="font-family: 'Crimson Pro', serif; font-size: 28px; margin-bottom: 32px;">
+                            <i class="fas fa-layer-group" style="color: var(--primary);"></i> O'xshash Maqolalar
+                        </h3>
+                        <div class="blog-grid" style="grid-template-columns: repeat(3, 1fr);">
+                            <% relatedBlogs.forEach(function(related) { %>
+                                <article class="blog-card">
+                                    <a href="/blog/<%= related.slug %>" class="blog-card-image">
+                                        <img src="<%= related.featuredImage %>" alt="<%= related.title %>" onerror="this.src='/uploads/default-blog.svg'">
+                                    </a>
+                                    <div class="blog-card-content">
+                                        <a href="/blog/<%= related.slug %>">
+                                            <h3 class="blog-card-title" style="font-size: 18px;"><%= related.title.substring(0, 60) %><%= related.title.length > 60 ? '...' : '' %></h3>
+                                        </a>
+                                    </div>
+                                </article>
+                            <% }); %>
+                        </div>
+                    </section>
+                <% } %>
+            </main>
+
+            <!-- Sidebar -->
+            <aside class="sidebar">
+                <div class="sidebar-widget">
+                    <h3 class="widget-title"><i class="fas fa-folder"></i> Kategoriyalar</h3>
+                    <ul class="category-list">
+                        <% categories.forEach(function(cat) { %>
+                            <li>
+                                <a href="/category/<%= cat.slug %>">
+                                    <%= cat.name %>
+                                </a>
+                            </li>
+                        <% }); %>
+                    </ul>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <%- include('partials/footer') %>
+
+    <script>
+        document.getElementById('commentForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const messageDiv = document.getElementById('commentMessage');
+            
+            try {
+                const response = await fetch(this.action, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        name: formData.get('name'),
+                        email: formData.get('email'),
+                        content: formData.get('content')
+                    })
+                });
+                
+                const data = await response.json();
+                
+                messageDiv.style.display = 'block';
+                if (data.success) {
+                    messageDiv.style.background = 'rgba(16, 185, 129, 0.1)';
+                    messageDiv.style.border = '1px solid rgba(16, 185, 129, 0.3)';
+                    messageDiv.style.color = '#34d399';
+                    messageDiv.innerHTML = '<i class="fas fa-check-circle"></i> ' + data.message;
+                    this.reset();
+                } else {
+                    messageDiv.style.background = 'rgba(239, 68, 68, 0.1)';
+                    messageDiv.style.border = '1px solid rgba(239, 68, 68, 0.3)';
+                    messageDiv.style.color = '#f87171';
+                    messageDiv.innerHTML = '<i class="fas fa-exclamation-circle"></i> ' + data.message;
+                }
+            } catch (error) {
+                messageDiv.style.display = 'block';
+                messageDiv.style.background = 'rgba(239, 68, 68, 0.1)';
+                messageDiv.style.border = '1px solid rgba(239, 68, 68, 0.3)';
+                messageDiv.style.color = '#f87171';
+                messageDiv.innerHTML = '<i class="fas fa-exclamation-circle"></i> Xatolik yuz berdi';
+            }
+        });
+    </script>
+</body>
+</html>

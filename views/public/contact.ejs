@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <%- include('partials/head') %>
+</head>
+<body>
+    <%- include('partials/header') %>
+
+    <section style="padding: 80px 0;">
+        <div class="container" style="max-width: 900px;">
+            <h1 style="font-family: 'Crimson Pro', serif; font-size: 48px; text-align: center; margin-bottom: 16px;">
+                Biz bilan bog'laning
+            </h1>
+            <p style="text-align: center; color: var(--text-secondary); margin-bottom: 48px; max-width: 600px; margin-left: auto; margin-right: auto;">
+                Savollaringiz bormi? Biz bilan bog'laning va biz sizga yordam beramiz.
+            </p>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 48px;">
+                <!-- Contact Form -->
+                <div style="background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px; padding: 36px;">
+                    <h2 style="font-family: 'Crimson Pro', serif; font-size: 24px; margin-bottom: 24px;">
+                        <i class="fas fa-paper-plane" style="color: var(--primary);"></i> Xabar yuborish
+                    </h2>
+
+                    <form>
+                        <div style="margin-bottom: 20px;">
+                            <label style="display: block; margin-bottom: 8px; font-weight: 500;">Ismingiz</label>
+                            <input type="text" placeholder="To'liq ismingiz" required style="width: 100%; padding: 14px 18px; background: rgba(15, 15, 26, 0.6); border: 1px solid var(--border); border-radius: 10px; color: var(--text); font-size: 15px;">
+                        </div>
+
+                        <div style="margin-bottom: 20px;">
+                            <label style="display: block; margin-bottom: 8px; font-weight: 500;">Email</label>
+                            <input type="email" placeholder="email@example.com" required style="width: 100%; padding: 14px 18px; background: rgba(15, 15, 26, 0.6); border: 1px solid var(--border); border-radius: 10px; color: var(--text); font-size: 15px;">
+                        </div>
+
+                        <div style="margin-bottom: 20px;">
+                            <label style="display: block; margin-bottom: 8px; font-weight: 500;">Mavzu</label>
+                            <input type="text" placeholder="Xabar mavzusi" required style="width: 100%; padding: 14px 18px; background: rgba(15, 15, 26, 0.6); border: 1px solid var(--border); border-radius: 10px; color: var(--text); font-size: 15px;">
+                        </div>
+
+                        <div style="margin-bottom: 24px;">
+                            <label style="display: block; margin-bottom: 8px; font-weight: 500;">Xabar</label>
+                            <textarea placeholder="Xabaringizni yozing..." required style="width: 100%; padding: 14px 18px; background: rgba(15, 15, 26, 0.6); border: 1px solid var(--border); border-radius: 10px; color: var(--text); font-size: 15px; min-height: 150px; resize: vertical;"></textarea>
+                        </div>
+
+                        <button type="submit" style="width: 100%; padding: 16px; background: var(--primary); border: none; border-radius: 10px; color: var(--dark); font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s ease;">
+                            <i class="fas fa-paper-plane"></i> Yuborish
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Contact Info -->
+                <div>
+                    <div style="background: linear-gradient(135deg, rgba(201, 162, 39, 0.1), rgba(233, 69, 96, 0.05)); border: 1px solid var(--border); border-radius: 20px; padding: 36px; margin-bottom: 24px;">
+                        <h2 style="font-family: 'Crimson Pro', serif; font-size: 24px; margin-bottom: 24px;">
+                            <i class="fas fa-info-circle" style="color: var(--primary);"></i> Bog'lanish ma'lumotlari
+                        </h2>
+
+                        <div style="margin-bottom: 24px;">
+                            <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 20px;">
+                                <div style="width: 50px; height: 50px; background: rgba(201, 162, 39, 0.2); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                                    <i class="fas fa-envelope" style="color: var(--primary); font-size: 20px;"></i>
+                                </div>
+                                <div>
+                                    <div style="font-weight: 600; margin-bottom: 4px;">Email</div>
+                                    <div style="color: var(--text-secondary);">info@blogsayt.uz</div>
+                                </div>
+                            </div>
+
+                            <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 20px;">
+                                <div style="width: 50px; height: 50px; background: rgba(201, 162, 39, 0.2); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                                    <i class="fas fa-phone" style="color: var(--primary); font-size: 20px;"></i>
+                                </div>
+                                <div>
+                                    <div style="font-weight: 600; margin-bottom: 4px;">Telefon</div>
+                                    <div style="color: var(--text-secondary);">+998 90 123 45 67</div>
+                                </div>
+                            </div>
+
+                            <div style="display: flex; align-items: center; gap: 16px;">
+                                <div style="width: 50px; height: 50px; background: rgba(201, 162, 39, 0.2); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                                    <i class="fas fa-map-marker-alt" style="color: var(--primary); font-size: 20px;"></i>
+                                </div>
+                                <div>
+                                    <div style="font-weight: 600; margin-bottom: 4px;">Manzil</div>
+                                    <div style="color: var(--text-secondary);">Toshkent sh., O'zbekiston</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Social Links -->
+                    <div style="background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px; padding: 36px;">
+                        <h3 style="font-size: 18px; margin-bottom: 20px;">Ijtimoiy tarmoqlarda kuzating</h3>
+                        <div style="display: flex; gap: 12px;">
+                            <a href="#" style="width: 50px; height: 50px; background: #1877f2; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 20px; transition: transform 0.3s ease;">
+                                <i class="fab fa-facebook-f"></i>
+                            </a>
+                            <a href="#" style="width: 50px; height: 50px; background: #1da1f2; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 20px; transition: transform 0.3s ease;">
+                                <i class="fab fa-twitter"></i>
+                            </a>
+                            <a href="#" style="width: 50px; height: 50px; background: linear-gradient(135deg, #f58529, #dd2a7b, #8134af); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 20px; transition: transform 0.3s ease;">
+                                <i class="fab fa-instagram"></i>
+                            </a>
+                            <a href="#" style="width: 50px; height: 50px; background: #0088cc; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 20px; transition: transform 0.3s ease;">
+                                <i class="fab fa-telegram-plane"></i>
+                            </a>
+                            <a href="#" style="width: 50px; height: 50px; background: #ff0000; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 20px; transition: transform 0.3s ease;">
+                                <i class="fab fa-youtube"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <%- include('partials/footer') %>
+</body>
+</html>

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <%- include('partials/head') %>
+</head>
+<body>
+    <%- include('partials/header') %>
+
+    <section style="padding: 80px 0;">
+        <div class="container" style="max-width: 800px;">
+            <h1 style="font-family: 'Crimson Pro', serif; font-size: 48px; text-align: center; margin-bottom: 32px;">
+                Biz Haqimizda
+            </h1>
+
+            <div style="background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px; padding: 48px; margin-bottom: 40px;">
+                <p style="font-size: 18px; line-height: 1.9; color: var(--text-secondary); margin-bottom: 24px;">
+                    <strong style="color: var(--primary);">BlogSayt</strong> - bu bilim va ilhom manbai. Biz sizga eng so'nggi yangiliklar, texnologiya, 
+                    san'at, madaniyat va hayot haqidagi qiziqarli maqolalarni taqdim etamiz.
+                </p>
+
+                <p style="font-size: 18px; line-height: 1.9; color: var(--text-secondary); margin-bottom: 24px;">
+                    Bizning maqsadimiz - o'quvchilarimizga sifatli va foydali kontent taqdim etish. Har bir maqola ehtiyotkorlik 
+                    bilan yozilgan va tekshirilgan bo'lib, sizga eng aniq va dolzarb ma'lumotlarni yetkazadi.
+                </p>
+
+                <p style="font-size: 18px; line-height: 1.9; color: var(--text-secondary);">
+                    Jamoamiz tajribali yozuvchilar va mutaxassislardan iborat bo'lib, har kuni yangi va qiziqarli mavzular 
+                    ustida ishlamoqdalar.
+                </p>
+            </div>
+
+            <!-- Stats -->
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-bottom: 48px;">
+                <div style="background: linear-gradient(135deg, rgba(201, 162, 39, 0.1), transparent); border: 1px solid var(--border); border-radius: 16px; padding: 32px; text-align: center;">
+                    <div style="font-size: 48px; font-weight: 700; color: var(--primary); margin-bottom: 8px;">100+</div>
+                    <div style="color: var(--text-secondary);">Maqolalar</div>
+                </div>
+                <div style="background: linear-gradient(135deg, rgba(233, 69, 96, 0.1), transparent); border: 1px solid var(--border); border-radius: 16px; padding: 32px; text-align: center;">
+                    <div style="font-size: 48px; font-weight: 700; color: var(--accent); margin-bottom: 8px;">10K+</div>
+                    <div style="color: var(--text-secondary);">O'quvchilar</div>
+                </div>
+                <div style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), transparent); border: 1px solid var(--border); border-radius: 16px; padding: 32px; text-align: center;">
+                    <div style="font-size: 48px; font-weight: 700; color: #10b981; margin-bottom: 8px;">500+</div>
+                    <div style="color: var(--text-secondary);">Izohlar</div>
+                </div>
+            </div>
+
+            <!-- Our Values -->
+            <h2 style="font-family: 'Crimson Pro', serif; font-size: 32px; margin-bottom: 24px; text-align: center;">
+                Bizning Qadriyatlarimiz
+            </h2>
+
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px;">
+                <div style="background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; padding: 28px;">
+                    <div style="width: 50px; height: 50px; background: linear-gradient(135deg, var(--primary), var(--accent)); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 16px;">
+                        <i class="fas fa-star" style="font-size: 20px; color: white;"></i>
+                    </div>
+                    <h3 style="font-size: 20px; margin-bottom: 12px;">Sifat</h3>
+                    <p style="color: var(--text-secondary); font-size: 15px;">Har bir maqola sifatli va foydali bo'lishi uchun ehtiyotkorlik bilan tayyorlanadi.</p>
+                </div>
+
+                <div style="background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; padding: 28px;">
+                    <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #0ea5e9, #06b6d4); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 16px;">
+                        <i class="fas fa-lightbulb" style="font-size: 20px; color: white;"></i>
+                    </div>
+                    <h3 style="font-size: 20px; margin-bottom: 12px;">Innovatsiya</h3>
+                    <p style="color: var(--text-secondary); font-size: 15px;">Eng so'nggi texnologiyalar va trendlar haqida xabardor bo'ling.</p>
+                </div>
+
+                <div style="background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; padding: 28px;">
+                    <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #10b981, #34d399); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 16px;">
+                        <i class="fas fa-users" style="font-size: 20px; color: white;"></i>
+                    </div>
+                    <h3 style="font-size: 20px; margin-bottom: 12px;">Jamoa</h3>
+                    <p style="color: var(--text-secondary); font-size: 15px;">Kuchli jamoa bilan birgalikda ajoyib kontentlar yaratamiz.</p>
+                </div>
+
+                <div style="background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; padding: 28px;">
+                    <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #f59e0b, #fbbf24); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 16px;">
+                        <i class="fas fa-heart" style="font-size: 20px; color: white;"></i>
+                    </div>
+                    <h3 style="font-size: 20px; margin-bottom: 12px;">Sadoqat</h3>
+                    <p style="color: var(--text-secondary); font-size: 15px;">O'quvchilarimizga sodiq bo'lib, ularning ehtiyojlarini birinchi o'ringa qo'yamiz.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <%- include('partials/footer') %>
+</body>
+</html>

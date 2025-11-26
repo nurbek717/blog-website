@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <%- include('partials/head') %>
+</head>
+<body>
+    <%- include('partials/header') %>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1 class="hero-title">Bilim va Ilhom Dunyosi</h1>
+            <p class="hero-subtitle">
+                Texnologiya, hayot, san'at va boshqa ko'plab sohalar haqidagi qiziqarli maqolalar. 
+                Yangi bilimlar va g'oyalar bilan tanishing.
+            </p>
+        </div>
+    </section>
+
+    <% if (featuredBlogs && featuredBlogs.length > 0) { %>
+    <!-- Featured Section -->
+    <section class="featured-section">
+        <div class="container">
+            <h2 class="section-title"><i class="fas fa-star"></i> Featured Maqolalar</h2>
+            <div class="featured-grid">
+                <a href="/blog/<%= featuredBlogs[0].slug %>" class="featured-main">
+                    <img src="<%= featuredBlogs[0].featuredImage %>" alt="<%= featuredBlogs[0].title %>" onerror="this.src='/uploads/default-blog.svg'">
+                    <div class="overlay">
+                        <% if (featuredBlogs[0].category) { %>
+                            <span class="category-badge"><%= featuredBlogs[0].category.name %></span>
+                        <% } %>
+                        <h3><%= featuredBlogs[0].title %></h3>
+                        <p style="color: #ccc; font-size: 14px;">
+                            <i class="far fa-calendar"></i> <%= new Date(featuredBlogs[0].publishedAt || featuredBlogs[0].createdAt).toLocaleDateString('uz-UZ') %>
+                            &nbsp;&nbsp;
+                            <i class="far fa-eye"></i> <%= featuredBlogs[0].views %> ko'rish
+                        </p>
+                    </div>
+                </a>
+                <div class="featured-side">
+                    <% featuredBlogs.slice(1, 3).forEach(function(blog) { %>
+                        <a href="/blog/<%= blog.slug %>" class="featured-side-item">
+                            <img src="<%= blog.featuredImage %>" alt="<%= blog.title %>" onerror="this.src='/uploads/default-blog.svg'">
+                            <div class="overlay">
+                                <h4><%= blog.title.substring(0, 50) %><%= blog.title.length > 50 ? '...' : '' %></h4>
+                            </div>
+                        </a>
+                    <% }); %>
+                </div>
+            </div>
+        </div>
+    </section>
+    <% } %>
+
+    <!-- Main Content with Sidebar -->
+    <div class="container">
+        <div class="main-layout">
+            <!-- Blog Grid -->
+            <main>
+                <h2 class="section-title"><i class="fas fa-newspaper"></i> So'nggi Maqolalar</h2>
+                <div class="blog-grid" style="grid-template-columns: repeat(2, 1fr);">
+                    <% blogs.forEach(function(blog) { %>
+                        <article class="blog-card">
+                            <a href="/blog/<%= blog.slug %>" class="blog-card-image">
+                                <img src="<%= blog.featuredImage %>" alt="<%= blog.title %>" onerror="this.src='/uploads/default-blog.svg'">
+                            </a>
+                            <div class="blog-card-content">
+                                <div class="blog-card-meta">
+                                    <% if (blog.category) { %>
+                                        <a href="/category/<%= blog.category.slug %>" class="blog-card-category"><%= blog.category.name %></a>
+                                    <% } %>
+                                    <span><i class="far fa-calendar"></i> <%= new Date(blog.publishedAt || blog.createdAt).toLocaleDateString('uz-UZ') %></span>
+                                </div>
+                                <a href="/blog/<%= blog.slug %>">
+                                    <h3 class="blog-card-title"><%= blog.title %></h3>
+                                </a>
+                                <p class="blog-card-excerpt"><%= blog.excerpt || '' %></p>
+                                <div class="blog-card-footer">
+                                    <div class="author">
+                                        <div class="author-avatar"><%= blog.author ? blog.author.name.charAt(0).toUpperCase() : 'A' %></div>
+                                        <span class="author-name"><%= blog.author ? blog.author.name : 'Admin' %></span>
+                                    </div>
+                                    <a href="/blog/<%= blog.slug %>" class="read-more">
+                                        O'qish <i class="fas fa-arrow-right"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </article>
+                    <% }); %>
+                </div>
+
+                <% if (blogs.length === 0) { %>
+                    <p style="text-align: center; color: var(--text-secondary); padding: 60px 0;">Hozircha maqolalar yo'q</p>
+                <% } %>
+
+                <% if (totalPages > 1) { %>
+                    <div class="pagination">
+                        <% if (currentPage > 1) { %>
+                            <a href="/?page=<%= currentPage - 1 %>">&laquo; Oldingi</a>
+                        <% } %>
+                        <% for (var i = 1; i <= totalPages; i++) { %>
+                            <% if (i === currentPage) { %>
+                                <span class="active"><%= i %></span>
+                            <% } else { %>
+                                <a href="/?page=<%= i %>"><%= i %></a>
+                            <% } %>
+                        <% } %>
+                        <% if (currentPage < totalPages) { %>
+                            <a href="/?page=<%= currentPage + 1 %>">Keyingi &raquo;</a>
+                        <% } %>
+                    </div>
+                <% } %>
+            </main>
+
+            <!-- Sidebar -->
+            <aside class="sidebar">
+                <div class="sidebar-widget">
+                    <h3 class="widget-title"><i class="fas fa-folder"></i> Kategoriyalar</h3>
+                    <ul class="category-list">
+                        <% categories.forEach(function(cat) { %>
+                            <li>
+                                <a href="/category/<%= cat.slug %>">
+                                    <%= cat.name %>
+                                    <span class="category-count"><%= cat.blogCount || 0 %></span>
+                                </a>
+                            </li>
+                        <% }); %>
+                    </ul>
+                </div>
+
+                <div class="sidebar-widget">
+                    <h3 class="widget-title"><i class="fas fa-info-circle"></i> Biz Haqimizda</h3>
+                    <p style="color: var(--text-secondary); font-size: 14px; line-height: 1.8;">
+                        BlogSayt - bu bilim va ilhom manbai. Biz sizga eng so'nggi yangiliklar, 
+                        texnologiya va hayot haqidagi qiziqarli maqolalarni taqdim etamiz.
+                    </p>
+                </div>
+
+                <div class="sidebar-widget" style="background: linear-gradient(135deg, rgba(201, 162, 39, 0.1), rgba(233, 69, 96, 0.1));">
+                    <h3 class="widget-title"><i class="fas fa-envelope"></i> Obuna bo'ling</h3>
+                    <p style="color: var(--text-secondary); font-size: 14px; margin-bottom: 16px;">
+                        Yangi maqolalardan xabardor bo'lish uchun email manzilingizni qoldiring.
+                    </p>
+                    <form style="display: flex; gap: 8px;">
+                        <input type="email" placeholder="Email manzil" style="flex: 1; padding: 10px 14px; background: rgba(15, 15, 26, 0.6); border: 1px solid var(--border); border-radius: 8px; color: var(--text);">
+                        <button type="submit" style="padding: 10px 16px; background: var(--primary); border: none; border-radius: 8px; color: var(--dark); cursor: pointer;">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </form>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <%- include('partials/footer') %>
+</body>
+</html>

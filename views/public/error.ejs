@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xatolik - Blog</title>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: linear-gradient(135deg, #080810 0%, #0f0f1a 100%);
+            color: #ccd6f6;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .error-container {
+            max-width: 500px;
+        }
+
+        .error-icon {
+            font-size: 80px;
+            margin-bottom: 24px;
+        }
+
+        .error-title {
+            font-family: 'Crimson Pro', serif;
+            font-size: 32px;
+            margin-bottom: 16px;
+            color: #e94560;
+        }
+
+        .error-message {
+            color: #8892b0;
+            font-size: 18px;
+            margin-bottom: 32px;
+            line-height: 1.6;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 28px;
+            background: #c9a227;
+            color: #080810;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background: #a88720;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="error-container">
+        <div class="error-icon">⚠️</div>
+        <h1 class="error-title">Xatolik yuz berdi</h1>
+        <p class="error-message">
+            Kechirasiz, kutilmagan xatolik yuz berdi. Iltimos, keyinroq qayta urinib ko'ring.
+        </p>
+        <a href="/" class="back-btn">
+            ← Bosh sahifaga qaytish
+        </a>
+    </div>
+</body>
+</html>
+
+

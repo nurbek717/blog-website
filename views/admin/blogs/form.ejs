@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <%- include('../partials/head') %>
+</head>
+<body>
+    <div class="admin-container">
+        <%- include('../partials/sidebar') %>
+
+        <main class="main-content">
+            <%- include('../partials/topbar') %>
+
+            <div class="page-content">
+                <% if (typeof error !== 'undefined' && error) { %>
+                    <div class="alert alert-error">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <%= error %>
+                    </div>
+                <% } %>
+
+                <div class="card">
+                    <form action="/admin/blogs<%= blog ? '/' + blog._id : '' %>" method="POST" enctype="multipart/form-data">
+                        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 32px;">
+                            <!-- Left Column -->
+                            <div>
+                                <div class="form-group">
+                                    <label class="form-label">Sarlavha *</label>
+                                    <input type="text" name="title" class="form-control" value="<%= blog ? blog.title : '' %>" required placeholder="Blog sarlavhasini kiriting">
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">Kontent *</label>
+                                    <textarea name="content" class="form-control" style="min-height: 300px;" required placeholder="Blog matnini yozing..."><%= blog ? blog.content : '' %></textarea>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">Qisqa tavsif (Excerpt)</label>
+                                    <textarea name="excerpt" class="form-control" style="min-height: 100px;" placeholder="Qisqa tavsif..."><%= blog ? blog.excerpt || '' : '' %></textarea>
+                                </div>
+
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                                    <div class="form-group">
+                                        <label class="form-label">Meta Title</label>
+                                        <input type="text" name="metaTitle" class="form-control" value="<%= blog ? blog.metaTitle || '' : '' %>" placeholder="SEO sarlavha" maxlength="70">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Meta Description</label>
+                                        <input type="text" name="metaDescription" class="form-control" value="<%= blog ? blog.metaDescription || '' : '' %>" placeholder="SEO tavsif" maxlength="160">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Right Column -->
+                            <div>
+                                <div class="form-group">
+                                    <label class="form-label">Kategoriya *</label>
+                                    <select name="category" class="form-control" required>
+                                        <option value="">Kategoriya tanlang</option>
+                                        <% categories.forEach(function(cat) { %>
+                                            <option value="<%= cat._id %>" <%= blog && blog.category && blog.category.toString() === cat._id.toString() ? 'selected' : '' %>><%= cat.name %></option>
+                                        <% }); %>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">Holat</label>
+                                    <select name="status" class="form-control">
+                                        <option value="draft" <%= blog && blog.status === 'draft' ? 'selected' : '' %>>Qoralama</option>
+                                        <option value="published" <%= blog && blog.status === 'published' ? 'selected' : '' %>>Nashr qilish</option>
+                                        <option value="archived" <%= blog && blog.status === 'archived' ? 'selected' : '' %>>Arxiv</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">Teglar (vergul bilan ajrating)</label>
+                                    <input type="text" name="tags" class="form-control" value="<%= blog && blog.tags ? blog.tags.join(', ') : '' %>" placeholder="teg1, teg2, teg3">
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">Asosiy rasm</label>
+                                    <% if (blog && blog.featuredImage) { %>
+                                        <div style="margin-bottom: 12px;">
+                                            <img src="<%= blog.featuredImage %>" alt="" style="width: 100%; height: 150px; object-fit: cover; border-radius: 10px;" onerror="this.style.display='none'">
+                                        </div>
+                                    <% } %>
+                                    <input type="file" name="featuredImage" class="form-control" accept="image/*">
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-check">
+                                        <input type="checkbox" name="isFeatured" <%= blog && blog.isFeatured ? 'checked' : '' %>>
+                                        <span>Featured qilish (bosh sahifada ko'rsatish)</span>
+                                    </label>
+                                </div>
+
+                                <div style="display: flex; gap: 12px; margin-top: 32px;">
+                                    <button type="submit" class="btn btn-primary" style="flex: 1;">
+                                        <i class="fas fa-save"></i> <%= blog ? 'Yangilash' : 'Yaratish' %>
+                                    </button>
+                                    <a href="/admin/blogs" class="btn btn-secondary">
+                                        <i class="fas fa-times"></i> Bekor
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <style>
+        @media (max-width: 992px) {
+            .card form > div {
+                grid-template-columns: 1fr !important;
+            }
+        }
+    </style>
+</body>
+</html>

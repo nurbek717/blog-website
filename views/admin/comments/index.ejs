@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <%- include('../partials/head') %>
+</head>
+<body>
+    <div class="admin-container">
+        <%- include('../partials/sidebar') %>
+
+        <main class="main-content">
+            <%- include('../partials/topbar') %>
+
+            <div class="page-content">
+                <% if (typeof success !== 'undefined' && success) { %>
+                    <div class="alert alert-success">
+                        <i class="fas fa-check-circle"></i>
+                        <%= success %>
+                    </div>
+                <% } %>
+
+                <% if (typeof error !== 'undefined' && error) { %>
+                    <div class="alert alert-error">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <%= error %>
+                    </div>
+                <% } %>
+
+                <div style="display: flex; justify-content: flex-start; margin-bottom: 24px;">
+                    <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                        <a href="/admin/comments" class="btn <%= !query.status ? 'btn-primary' : 'btn-secondary' %>">Barchasi</a>
+                        <a href="/admin/comments?status=pending" class="btn <%= query.status === 'pending' ? 'btn-warning' : 'btn-secondary' %>">
+                            <i class="fas fa-clock"></i> Kutilayotgan
+                        </a>
+                        <a href="/admin/comments?status=approved" class="btn <%= query.status === 'approved' ? 'btn-success' : 'btn-secondary' %>">
+                            <i class="fas fa-check"></i> Tasdiqlangan
+                        </a>
+                        <a href="/admin/comments?status=rejected" class="btn <%= query.status === 'rejected' ? 'btn-danger' : 'btn-secondary' %>">
+                            <i class="fas fa-times"></i> Rad etilgan
+                        </a>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Muallif</th>
+                                    <th>Izoh</th>
+                                    <th>Blog</th>
+                                    <th>Holat</th>
+                                    <th>Sana</th>
+                                    <th>Amallar</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% comments.forEach(function(comment) { %>
+                                    <tr>
+                                        <td>
+                                            <div>
+                                                <strong><%= comment.name %></strong>
+                                                <div style="color: #64748b; font-size: 12px;"><%= comment.email %></div>
+                                            </div>
+                                        </td>
+                                        <td style="max-width: 300px;">
+                                            <div style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                                                <%= comment.content.substring(0, 100) %><%= comment.content.length > 100 ? '...' : '' %>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <% if (comment.blog) { %>
+                                                <a href="/blog/<%= comment.blog.slug %>" target="_blank" style="color: #6366f1; text-decoration: none;"><%= comment.blog.title.substring(0, 30) %>...</a>
+                                            <% } else { %>
+                                                <span style="color: #64748b;">O'chirilgan</span>
+                                            <% } %>
+                                        </td>
+                                        <td>
+                                            <span class="badge <%= comment.status === 'approved' ? 'badge-success' : comment.status === 'pending' ? 'badge-warning' : 'badge-danger' %>">
+                                                <%= comment.status === 'approved' ? 'Tasdiqlangan' : comment.status === 'pending' ? 'Kutilayotgan' : 'Rad etilgan' %>
+                                            </span>
+                                        </td>
+                                        <td><%= new Date(comment.createdAt).toLocaleDateString('uz-UZ') %></td>
+                                        <td>
+                                            <div class="action-buttons">
+                                                <% if (comment.status !== 'approved') { %>
+                                                    <form action="/admin/comments/<%= comment._id %>/status" method="POST" style="display: inline;">
+                                                        <input type="hidden" name="status" value="approved">
+                                                        <button type="submit" class="action-btn" style="background: var(--success);" title="Tasdiqlash">
+                                                            <i class="fas fa-check"></i>
+                                                        </button>
+                                                    </form>
+                                                <% } %>
+                                                <% if (comment.status !== 'rejected') { %>
+                                                    <form action="/admin/comments/<%= comment._id %>/status" method="POST" style="display: inline;">
+                                                        <input type="hidden" name="status" value="rejected">
+                                                        <button type="submit" class="action-btn" style="background: var(--warning);" title="Rad etish">
+                                                            <i class="fas fa-ban"></i>
+                                                        </button>
+                                                    </form>
+                                                <% } %>
+                                                <form action="/admin/comments/<%= comment._id %>/delete" method="POST" style="display: inline;" onsubmit="return confirm('Izohni o\'chirishni tasdiqlaysizmi?')">
+                                                    <button type="submit" class="action-btn delete" title="O'chirish">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                <% }); %>
+                                <% if (comments.length === 0) { %>
+                                    <tr><td colspan="6" style="text-align: center; color: #64748b; padding: 40px;">Izohlar topilmadi</td></tr>
+                                <% } %>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <% if (totalPages > 1) { %>
+                        <div class="pagination">
+                            <% if (currentPage > 1) { %>
+                                <a href="/admin/comments?page=<%= currentPage - 1 %>&status=<%= query.status || '' %>">&laquo; Oldingi</a>
+                            <% } %>
+                            <% for (var i = 1; i <= totalPages; i++) { %>
+                                <% if (i === currentPage) { %>
+                                    <span class="active"><%= i %></span>
+                                <% } else { %>
+                                    <a href="/admin/comments?page=<%= i %>&status=<%= query.status || '' %>"><%= i %></a>
+                                <% } %>
+                            <% } %>
+                            <% if (currentPage < totalPages) { %>
+                                <a href="/admin/comments?page=<%= currentPage + 1 %>&status=<%= query.status || '' %>">Keyingi &raquo;</a>
+                            <% } %>
+                        </div>
+                    <% } %>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

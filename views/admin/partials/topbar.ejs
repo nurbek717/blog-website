@@ -1,0 +1,17 @@
+<header class="top-bar">
+    <div class="top-bar-left">
+        <h1><%= title %></h1>
+    </div>
+    <div class="top-bar-right">
+        <div class="admin-profile">
+            <div class="admin-avatar">
+                <%= admin.name.charAt(0).toUpperCase() %>
+            </div>
+            <span class="admin-name"><%= admin.name %></span>
+        </div>
+        <a href="/admin/logout" class="logout-btn">
+            <i class="fas fa-sign-out-alt"></i> Chiqish
+        </a>
+    </div>
+</header>
+

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <%- include('partials/head') %>
+</head>
+<body>
+    <%- include('partials/header') %>
+
+    <!-- Search Header -->
+    <section style="padding: 60px 0; text-align: center;">
+        <div class="container">
+            <h1 style="font-family: 'Crimson Pro', serif; font-size: 42px; margin-bottom: 16px;">
+                Qidiruv natijalari
+            </h1>
+            <% if (query) { %>
+                <p style="color: var(--text-secondary);">"<strong style="color: var(--primary);"><%= query %></strong>" bo'yicha <%= blogs.length %> ta natija topildi</p>
+            <% } else { %>
+                <p style="color: var(--text-secondary);">Qidiruv so'rovini kiriting</p>
+            <% } %>
+            
+            <!-- Search Form -->
+            <form action="/search" method="GET" style="max-width: 500px; margin: 32px auto 0;">
+                <div style="display: flex; gap: 12px;">
+                    <input type="text" name="q" value="<%= query || '' %>" placeholder="Qidirish..." style="flex: 1; padding: 16px 20px; background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; color: var(--text); font-size: 16px;">
+                    <button type="submit" style="padding: 16px 24px; background: var(--primary); border: none; border-radius: 10px; color: var(--dark); font-weight: 600; cursor: pointer;">
+                        <i class="fas fa-search"></i> Qidirish
+                    </button>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <!-- Results -->
+    <div class="container">
+        <div class="main-layout">
+            <main>
+                <% if (blogs.length > 0) { %>
+                    <div class="blog-grid" style="grid-template-columns: repeat(2, 1fr);">
+                        <% blogs.forEach(function(blog) { %>
+                            <article class="blog-card">
+                                <a href="/blog/<%= blog.slug %>" class="blog-card-image">
+                                    <img src="<%= blog.featuredImage %>" alt="<%= blog.title %>" onerror="this.src='/uploads/default-blog.svg'">
+                                </a>
+                                <div class="blog-card-content">
+                                    <div class="blog-card-meta">
+                                        <% if (blog.category) { %>
+                                            <a href="/category/<%= blog.category.slug %>" class="blog-card-category"><%= blog.category.name %></a>
+                                        <% } %>
+                                        <span><i class="far fa-calendar"></i> <%= new Date(blog.publishedAt || blog.createdAt).toLocaleDateString('uz-UZ') %></span>
+                                    </div>
+                                    <a href="/blog/<%= blog.slug %>">
+                                        <h3 class="blog-card-title"><%= blog.title %></h3>
+                                    </a>
+                                    <p class="blog-card-excerpt"><%= blog.excerpt || '' %></p>
+                                    <div class="blog-card-footer">
+                                        <a href="/blog/<%= blog.slug %>" class="read-more">
+                                            O'qish <i class="fas fa-arrow-right"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </article>
+                        <% }); %>
+                    </div>
+
+                    <% if (totalPages > 1) { %>
+                        <div class="pagination">
+                            <% if (currentPage > 1) { %>
+                                <a href="/search?q=<%= encodeURIComponent(query) %>&page=<%= currentPage - 1 %>">&laquo; Oldingi</a>
+                            <% } %>
+                            <% for (var i = 1; i <= totalPages; i++) { %>
+                                <% if (i === currentPage) { %>
+                                    <span class="active"><%= i %></span>
+                                <% } else { %>
+                                    <a href="/search?q=<%= encodeURIComponent(query) %>&page=<%= i %>"><%= i %></a>
+                                <% } %>
+                            <% } %>
+                            <% if (currentPage < totalPages) { %>
+                                <a href="/search?q=<%= encodeURIComponent(query) %>&page=<%= currentPage + 1 %>">Keyingi &raquo;</a>
+                            <% } %>
+                        </div>
+                    <% } %>
+                <% } else { %>
+                    <div style="text-align: center; padding: 80px 0;">
+                        <i class="fas fa-search" style="font-size: 64px; color: var(--text-secondary); opacity: 0.3; margin-bottom: 24px;"></i>
+                        <h3 style="font-size: 24px; margin-bottom: 12px; color: var(--text-secondary);">Natija topilmadi</h3>
+                        <p style="color: var(--text-secondary);">Boshqa kalit so'zlar bilan qidirib ko'ring</p>
+                    </div>
+                <% } %>
+            </main>
+
+            <!-- Sidebar -->
+            <aside class="sidebar">
+                <div class="sidebar-widget">
+                    <h3 class="widget-title"><i class="fas fa-folder"></i> Kategoriyalar</h3>
+                    <ul class="category-list">
+                        <% categories.forEach(function(cat) { %>
+                            <li>
+                                <a href="/category/<%= cat.slug %>">
+                                    <%= cat.name %>
+                                </a>
+                            </li>
+                        <% }); %>
+                    </ul>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <%- include('partials/footer') %>
+</body>
+</html>
