@@ -13,6 +13,9 @@ const publicRoutes = require('./routes/public');
 
 const app = express();
 
+// Trust proxy (Render uchun kerak)
+app.set('trust proxy', 1);
+
 // Connect to MongoDB
 connectDB();
 
@@ -37,9 +40,10 @@ app.use(session({
         ttl: 24 * 60 * 60 // 1 kun
     }),
     cookie: {
-        secure: process.env.NODE_ENV === 'production',
+        secure: false, // Render proxy bilan ishlaydi
         httpOnly: true,
-        maxAge: 24 * 60 * 60 * 1000 // 1 kun
+        maxAge: 24 * 60 * 60 * 1000, // 1 kun
+        sameSite: 'lax'
     }
 }));
 
