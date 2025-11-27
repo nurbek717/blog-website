@@ -194,7 +194,14 @@
 
     /* Page Content */
     .page-content {
-        padding: 32px;
+        padding: 24px;
+        overflow-x: hidden;
+        max-width: 100%;
+    }
+    
+    /* Hide scrollbars but allow scroll */
+    .main-content {
+        overflow-x: hidden;
     }
 
     /* Cards */
@@ -223,9 +230,21 @@
     /* Stats Grid */
     .stats-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-        gap: 24px;
-        margin-bottom: 32px;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 16px;
+        margin-bottom: 24px;
+    }
+    
+    @media (max-width: 1200px) {
+        .stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+    
+    @media (max-width: 600px) {
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
     }
 
     .stat-card {
